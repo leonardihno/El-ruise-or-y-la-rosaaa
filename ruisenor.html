@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Lectura · El ruiseñor y la rosa</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f4ee;--panel:#fffdf9;--ink:#262220;--soft:#58524c;--line:#e3ddd1;--a:#a8632a;--as:#f3e3d2;--ad:#7a4419;--p:#6b5b95;--ps:#e7e2f2;--ok:#2f7d4f;--oks:#dff1e6;--no:#b23a3a;--nos:#f7e1e1;--bs:#dbe8ec;--b:#35657f;--bd:#234656}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Lora',Georgia,serif;line-height:1.65}
+h1,h2,h3,button,.anchor{font-family:'Inter',sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px 50px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-top:14px}
+.tr{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+h1{font-size:1.28rem;margin:0}h1 span{color:var(--soft);font-weight:400}
+.ct{font-size:.72rem;color:var(--soft)}
+.track{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:10px}
+#fill{height:100%;width:0;background:linear-gradient(90deg,var(--a),var(--p));transition:width .3s}
+#lbl{font-size:.72rem;color:var(--soft);margin:4px 0 10px}
+.tabs{display:flex;gap:4px}
+.tab{flex:1;padding:11px 8px;font-size:.9rem;font-weight:600;background:none;border:0;border-bottom:3px solid transparent;color:var(--soft);cursor:pointer;border-radius:6px 6px 0 0}
+.tab.on[data-t=r]{color:var(--ad);border-color:var(--a);background:var(--as)}
+.tab.on[data-t=a]{color:var(--bd);border-color:var(--b);background:var(--bs)}
+.tab.on[data-t=u]{color:#5b4a2a;border-color:#a88a2a;background:#f4ecd2}
+.tab.on[data-t=q]{color:var(--p);border-color:var(--p);background:var(--ps)}
+.panel{display:none;padding-top:22px}.panel.on{display:block}
+.sub{display:inline-flex;background:var(--line);border-radius:99px;padding:3px;margin-bottom:20px}
+.sub button{border:0;background:none;padding:7px 16px;border-radius:99px;font-size:.82rem;font-weight:600;color:var(--soft);cursor:pointer}
+.sub button.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 5px rgba(0,0,0,.1)}
+.sp{display:none}.sp.on{display:block}
+.lede{font-size:.95rem;color:var(--soft);font-style:italic;margin-bottom:18px}
+.step{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--a);border-radius:12px;padding:16px 20px;margin-bottom:12px}
+.step h3{margin:0 0 6px;font-size:1rem}.step p{margin:0;font-size:.96rem}
+.anchor{display:inline-block;font-size:.68rem;font-weight:700;padding:1px 8px;border-radius:99px;border:1px solid var(--a);background:var(--as);color:var(--ad);white-space:nowrap;margin-left:4px}
+.acc{display:flex;flex-direction:column;gap:10px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.hd{width:100%;text-align:left;background:none;border:0;border-left:5px solid var(--a);padding:14px 18px;font-size:.98rem;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;gap:10px;color:var(--ink)}
+.hd.open{background:var(--as)}
+.hd small{display:block;font-weight:400;font-size:.75rem;color:var(--soft)}
+.hd .ch{transition:transform .2s}.hd.open .ch{transform:rotate(180deg)}
+.bd{max-height:0;overflow:hidden;transition:max-height .25s}
+.bd div{padding:8px 20px 18px;font-size:.96rem}
+.bd .cita{font-style:italic;color:var(--soft);border-left:3px solid var(--line);padding:2px 12px;margin:8px 20px 0}
+.sn .step{border-left-color:var(--b)}.sn .anchor{background:var(--bs);color:var(--bd);border-color:var(--b)}
+.sn .hd{border-left-color:var(--b)}.sn .hd.open{background:var(--bs)}
+.bridge{background:var(--panel);border:1px solid var(--line);border-top:4px solid #a88a2a;border-radius:14px;padding:20px 22px;margin-bottom:18px}
+.bridge h3{margin:0 0 4px;font-size:1.05rem;color:#5b4a2a}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+@media(max-width:640px){.cols{grid-template-columns:1fr}}
+.col{border-radius:10px;padding:12px 14px;font-size:.9rem}.col.k{background:var(--as)}.col.s{background:var(--bs)}
+.col b{display:block;font-family:'Inter',sans-serif;font-size:.8rem;margin-bottom:6px}
+.col.k .anchor{background:var(--as);color:var(--ad);border-color:var(--a)}.col.s .anchor{background:var(--bs);color:var(--bd);border-color:var(--b)}
+.pq{background:#fff;border:1px dashed #a88a2a;border-radius:10px;padding:12px 14px;margin-top:12px;font-size:.88rem}
+.pq b{font-family:'Inter',sans-serif;font-size:.78rem;color:#5b4a2a;display:block;margin-bottom:4px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 2px 10px rgba(60,50,30,.08)}
+.qq{font-size:1.05rem;font-weight:600;margin:0 0 16px;font-family:'Inter',sans-serif}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:.95rem;font-family:'Lora',serif;color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--p);background:var(--ps)}
+.opt.ok{background:var(--oks);border-color:var(--ok)}.opt.no{background:var(--nos);border-color:var(--no)}
+.opt:disabled{cursor:default}
+.fb{margin-top:6px;padding:12px 14px;border-radius:10px;font-size:.9rem;background:var(--bs)}
+.btn{background:var(--p);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-weight:600;font-size:.9rem;cursor:pointer;margin-top:14px}
+.btn:hover{background:#54487a}
+.score{font-family:'Inter',sans-serif;font-size:2.4rem;font-weight:700;margin:4px 0}
+.rev{border-top:1px solid var(--line);padding:12px 0;font-size:.9rem}.rev b{display:block;margin-bottom:2px}
+.qmeta{font-size:.78rem;color:var(--soft);font-family:'Inter',sans-serif;margin-bottom:10px}
+footer{text-align:center;font-size:.75rem;color:var(--soft);margin-top:30px;padding-top:16px;border-top:1px solid var(--line)}
+</style>
+<body>
+<header><div class="wrap">
+<div class="tr"><h1>El ruiseñor y la rosa <span>· Filosofía y Ética</span></h1><span class="ct">Oscar Wilde</span></div>
+<div class="track"><div id="fill"></div></div><div id="lbl"></div>
+<nav class="tabs">
+<button class="tab on" data-t="r" onclick="tab('r')">Resumen</button>
+<button class="tab" data-t="a" onclick="tab('a')">Análisis</button>
+<button class="tab" data-t="q" onclick="tab('q')">Cuestionario</button>
+</nav></div></header>
+<div class="wrap" id="app"></div>
+<script>
+var R={
+corto:[
+["El deseo del estudiante","Un joven estudiante llora porque su amada solo bailará con él si le lleva una rosa roja, y en su jardín no hay ninguna [pp. 1-2]. Aunque ha leído a los sabios y posee «todos los secretos de la filosofía», su vida le parece destrozada por no tener una rosa [p. 1]."],
+["El ruiseñor lo entiende","El ruiseñor ve en el estudiante al «verdadero enamorado»: le ha cantado todas las noches sin conocerlo [p. 1]. Los demás (la lagartija, la mariposa, la margarita) no entienden y se burlan de que llore por una rosa [p. 2]."],
+["La búsqueda y el terrible precio","Dos rosales no tienen rosas rojas; el tercero, helado por el invierno, solo ofrece un medio: hacerla con música al claro de luna y teñirla con la sangre del propio corazón del ruiseñor [pp. 3-4]. El ruiseñor acepta, pues «el amor es mejor que la vida» [p. 4]."],
+["El sacrificio","El estudiante no comprende al ruiseñor porque «sólo sabía las cosas que están escritas en los libros» [p. 5], y lo juzga egoísta, de «puro estilo» y sin fin práctico [p. 5]. Esa noche el ruiseñor canta apoyado en las espinas hasta morir y la rosa se vuelve roja [pp. 6-8]."],
+["El desenlace","El estudiante halla la rosa, pero la hija del profesor la rechaza: no combina con su vestido y las joyas del sobrino del chambelán valen más [pp. 8-9]. Él tira la rosa, que aplasta un carro, y concluye que el amor es una tontería y vuelve a la filosofía y la metafísica [p. 9]."]],
+ext:[
+["El estudiante y la rosa roja","pp. 1-2","El estudiante se lamenta porque la joven dijo que bailaría con él si le llevaba una rosa roja, y no hay ninguna en su jardín [p. 1]. Exclama: «¡Ah, de qué cosa más insignificante depende la felicidad! He leído cuanto han escrito los sabios; poseo todos los secretos de la filosofía y encuentro mi vida destrozada por carecer de una rosa roja» [p. 1]. Imagina el baile del príncipe, la música y a su amada bailando, pero sin rosa «tendré que estar solo» [pp. 1-2].","«He leído cuanto han escrito los sabios; poseo todos los secretos de la filosofía...» [p. 1]"],
+["El ruiseñor y el amor verdadero","pp. 1-2","Desde su nido en la encina, el ruiseñor oye al estudiante y exclama: «He aquí, por fin, el verdadero enamorado»; le ha cantado todas las noches y cuenta su historia a las estrellas [p. 1]. Para él, el amor es «más bello que las esmeraldas y más raro que los finos ópalos» y no se compra ni se pesa en oro [p. 1]. La lagartija, la mariposa y la margarita no comprenden: «¿Por una rosa roja? ¡Qué tontería!», y la lagartija, «algo cínica», se ríe [p. 2]. El ruiseñor guarda silencio, reflexionando sobre «el misterio del amor» [p. 2]."],
+["La búsqueda de la rosa roja","pp. 2-4","El ruiseñor vuela al rosal del prado y ofrece sus «canciones más dulces» por una rosa roja: las rosas son blancas [pp. 2-3]. El rosal del reloj de sol las tiene amarillas [p. 3]. El rosal bajo la ventana del estudiante las tiene rojas, pero «el invierno ha helado mis venas» y no dará más rosas este año [pp. 3-4]. Hay un medio, «tan terrible que no me atrevo a decírtelo»: hacerla con notas de música al claro de luna y teñirla con la sangre del corazón del ruiseñor, cantando con el pecho apoyado en las espinas toda la noche [p. 4]."],
+["El pacto y la elección del ruiseñor","pp. 4-5","El ruiseñor reconoce que «la muerte es un buen precio por una rosa roja» y que todo el mundo ama la vida, con sus bellezas [p. 4]. Aun así decide: «el amor es mejor que la vida. ¿Y qué es el corazón de un pájaro comparado con el de un hombre?» [p. 4]. Promete la rosa al estudiante y solo le pide que sea un verdadero enamorado, «porque el amor es más sabio que la filosofía [...] más fuerte que el poder» [p. 5]. El estudiante no lo entiende, pues «sólo sabía las cosas que están escritas en los libros» [p. 5]. La encina sí lo comprende y se entristece; el ruiseñor le canta su última canción [p. 5]."],
+["Lo que piensa el estudiante","p. 5","Tras oír cantar al ruiseñor, el estudiante saca su cuaderno y lo juzga: tiene belleza innegable, «¿pero siente? Me temo que no». Es «como muchos artistas: puro estilo, exento de sinceridad», «no se sacrifica por los demás», solo piensa en la música y el arte y por eso es egoísta [p. 5]. Lamenta que sus notas no tengan «sentido alguno» ni persigan «ningún fin práctico» [p. 5]. Luego se duerme pensando en su adorada [p. 6]. Hay una ironía: el juicio es injusto, porque el ruiseñor está a punto de sacrificarse por él."],
+["La noche del sacrificio","pp. 6-8","El ruiseñor canta toda la noche con el pecho contra las espinas; la luna escucha [p. 6]. Primero canta el nacimiento del amor en un joven y una muchacha, y una rosa pálida se abre en la rama más alta [p. 6]. El rosal le grita que se apriete más: «o llegará el día antes de que la rosa esté terminada» [pp. 6-7]. Al cantar la pasión, aparece un rubor en los pétalos, pero el corazón de la rosa sigue blanco, porque «sólo la sangre de un ruiseñor puede colorear el corazón de una rosa» [p. 7]. Cuando las espinas tocan su corazón, canta «el amor sublimado por la muerte, el amor que no termina en la tumba», y la rosa se vuelve roja como un rubí [p. 7]. Su voz se debilita y muere con el corazón traspasado de espinas [pp. 7-8]."],
+["La rosa rechazada","pp. 8-9","A mediodía el estudiante abre la ventana, ve la rosa y exclama: «¡Qué extraña buena suerte!»; piensa que debe tener «un nombre muy enrevesado» en latín, y la corta [p. 8]. Corre a casa del profesor y se la ofrece a la joven, que la rechaza: «Temo que esta rosa no armonice bien con mi vestido»; además, el sobrino del chambelán le envió joyas, que «cuestan más que las flores» [pp. 8-9]. Él, furioso, tira la rosa al arroyo y un pesado carro la aplasta [p. 9]. Ella lo desprecia: «¿qué eres? Un simple estudiante» sin hebillas de plata [p. 9]."],
+["El regreso a la filosofía","p. 9","El estudiante concluye: «¡Qué tontería es el amor! No es ni la mitad de útil que la lógica, porque no puede probar nada; habla siempre de cosas que no sucederán» [p. 9]. Como «en nuestra época todo estriba en ser práctico», decide volver a la filosofía y a la metafísica [p. 9]. Abre «un gran libro polvoriento» y se pone a leer, que es el final del cuento [p. 9]."]]};
+var AN=[
+["1. Amor frente a razón y utilidad","El ruiseñor vive el amor; el estudiante lo calcula",
+"El ruiseñor dice que el amor es «más sabio que la filosofía» y «más fuerte que el poder» [p. 5]. El estudiante, al final, lo considera una «tontería» menos útil que la lógica [p. 9].",
+"El estudiante tiene todos los saberes de los libros, pero no comprende lo esencial: no entiende al ruiseñor porque «sólo sabía las cosas que están escritas en los libros» [p. 5]. Wilde contrapone la razón instrumental («ser práctico») al valor del amor y del sacrificio.",
+"Explique cómo el cuento contrapone el amor como valor en sí mismo a una razón que solo busca lo práctico, usando el contraste entre el ruiseñor y el estudiante."],
+["2. Sacrificio y sinceridad","El que da la vida frente al que solo habla de sentir",
+"El ruiseñor acepta morir: «el amor es mejor que la vida» [p. 4] y canta hasta que las espinas le traspasan el corazón [pp. 7-8].",
+"El estudiante dice que el ruiseñor «no se sacrifica por los demás» [p. 5] y solo reconoce el sufrimiento propio. Es una ironía dramática: el lector sabe que el ruiseñor está a punto de sacrificarse por él [pp. 5-8].",
+"Discuta la ironía del juicio del estudiante sobre el ruiseñor. ¿Qué dice el cuento sobre la diferencia entre sentir y sacrificarse?"],
+["3. Materialismo y valor de las cosas","La rosa no vale lo que una joya",
+"Para el ruiseñor, el amor «no se halla expuesto en el mercado»: no se compra ni se pesa en oro [p. 1].",
+"La joven rechaza la rosa porque no combina con su vestido y las joyas «cuestan más que las flores» [pp. 8-9]. Valora al estudiante por las hebillas de plata que podría tener [p. 9]. La rosa, hecha de vida, queda aplastada por un carro [p. 9].",
+"Compare el valor que el ruiseñor da al amor con el que la hija del profesor da a las cosas. ¿Qué crítica social aparece?"],
+["4. Arte, belleza y finalidad","¿Para qué sirve lo bello?",
+"El ruiseñor canta por amor y su canto sí tiene un sentido: crea la rosa [pp. 6-7].",
+"El estudiante opina que el arte es «puro estilo, exento de sinceridad», sin fin práctico [p. 5]. El cuento muestra que la belleza puede ser el resultado de un sacrificio auténtico que el público no reconoce.",
+"Analice la idea del estudiante de que la música no tiene «ningún fin práctico» a la luz de lo que ocurre con el canto del ruiseñor."],
+["5. Símbolos del cuento","Rosa roja, espinas, luna y encina",
+"La rosa roja nace de música y sangre [p. 4], y su corazón solo se tiñe cuando las espinas tocan el del ruiseñor [p. 7]. Las espinas son el costo del amor verdadero [p. 4].",
+"La luna escucha toda la noche [p. 6] y la encina comprende al ruiseñor y se entristece [p. 5]: la naturaleza reconoce lo que el estudiante ignora. El carro que aplasta la rosa [p. 9] simboliza la indiferencia del mundo práctico.",
+"Explique el simbolismo de la rosa roja y de las espinas, y qué contraste hay entre la reacción de la naturaleza y la del estudiante."]
+];
+var Q=[
+["¿Por qué llora al inicio el joven estudiante?","Porque no tiene una rosa roja para que su amada baile con él",["Porque suspendió un examen","Porque su amada se fue del pueblo","Porque perdió su cuaderno de notas"],"Pp. 1-2."],
+["¿Qué dice el estudiante de sí mismo al inicio?","Que ha leído a los sabios y posee los secretos de la filosofía, pero su vida está destrozada por falta de una rosa",["Que es pobre y desea riquezas","Que odia la filosofía","Que no sabe leer"],"P. 1."],
+["¿Cómo llama el ruiseñor al estudiante?","El verdadero enamorado",["El filósofo ingenuo","El joven soberbio","El sabio del jardín"],"P. 1."],
+["¿Cómo reaccionan la lagartija, la mariposa y la margarita ante su llanto?","Se burlan o no comprenden que llore por una rosa",["Lo consuelan","Le traen una rosa","Lo ignoran por completo"],"P. 2."],
+["¿Qué calificativo recibe la lagartija?","Algo cínica",["Muy sabia","Triste","Valiente"],"P. 2."],
+["¿Por qué los dos primeros rosales no pueden dar una rosa roja?","Sus rosas son blancas y amarillas",["Están secos","Son demasiado jóvenes","Están lejos del jardín"],"Pp. 2-3."],
+["¿Por qué el tercer rosal no tiene rosas rojas, aunque son su color?","El invierno, la escarcha y el huracán lo dañaron",["Nadie lo cuida","Está a la sombra","Es un rosal artificial"],"Pp. 3-4."],
+["¿Qué medio propone el rosal para conseguir la rosa roja?","Hacerla con música al claro de luna y teñirla con la sangre del corazón del ruiseñor",["Regarla con lágrimas","Esperar a la primavera","Comprarla en el mercado"],"P. 4."],
+["Frente al precio de la rosa, el ruiseñor concluye que…","el amor es mejor que la vida",["la rosa no vale la pena","debe pedir ayuda a la encina","la vida es más valiosa que el amor"],"P. 4."],
+["¿Qué pide el ruiseñor al estudiante a cambio?","Que sea un verdadero enamorado",["Que le construya un nido","Que cuide a la encina","Que deje la filosofía"],"P. 5."],
+["Según el ruiseñor, el amor es más sabio que… y más fuerte que…","la filosofía; el poder",["la ciencia; la riqueza","la lógica; la muerte","la música; el tiempo"],"P. 5."],
+["¿Por qué el estudiante no comprende al ruiseñor?","Porque solo sabía las cosas que están escritas en los libros",["Porque no entiende su idioma","Porque estaba dormido","Porque no quería escuchar"],"P. 5."],
+["¿Qué opina el estudiante del ruiseñor al oírlo cantar?","Que es bello pero egoísta, puro estilo y sin sinceridad",["Que es sabio y generoso","Que es un pájaro común","Que es un maestro de la lógica"],"P. 5."],
+["¿Qué ironía hay en el juicio del estudiante?","El ruiseñor está por sacrificarse por él, pero lo acusa de no sacrificarse",["El estudiante tiene razón en todo","El ruiseñor ya murió","La encina lo contradice en voz alta"],"Pp. 5-8."],
+["¿Cómo reacciona la encina ante la decisión del ruiseñor?","Lo comprende y se pone triste",["Se burla de él","Intenta detenerlo con ramas","No dice nada ni lo nota"],"P. 5."],
+["¿Qué ocurre cuando el ruiseñor canta apoyado en las espinas sin que lleguen aún a su corazón?","La rosa se vuelve rosada, pero su corazón sigue blanco",["La rosa se marchita","La rosa se vuelve roja del todo","No ocurre nada"],"P. 7."],
+["¿Por qué el corazón de la rosa seguía blanco?","Porque solo la sangre de un ruiseñor puede colorearlo",["Porque era una rosa blanca","Porque faltaba la luna","Porque el rosal estaba helado"],"P. 7."],
+["¿Qué canta el ruiseñor cuando las espinas tocan su corazón?","El amor sublimado por la muerte, el amor que no termina en la tumba",["La alegría de la primavera","La historia de las estrellas","Una canción para la encina"],"P. 7."],
+["¿Cómo muere el ruiseñor?","Con el corazón traspasado de espinas, sobre las altas hierbas",["Dormido en su nido","Atacado por un cazador","De frío bajo la nieve"],"Pp. 7-8."],
+["¿Qué dice el estudiante al ver la rosa en su ventana?","Que es una «extraña buena suerte» y que debe tener un nombre enrevesado en latín",["Que sabe que la hizo el ruiseñor","Que es una rosa común","Que la dejará crecer"],"P. 8."],
+["¿Qué le impide a la hija del profesor aceptar la rosa?","Que no armoniza con su vestido y las joyas del sobrino del chambelán valen más",["Que prefiere las rosas blancas","Que está enamorada de otro estudiante","Que no puede bailar"],"Pp. 8-9."],
+["¿Cómo desprecia la joven al estudiante?","Dice que es un simple estudiante que no tendrá hebillas de plata",["Lo acusa de ladrón","Se ríe de su poesía","Le dice que no sabe bailar"],"P. 9."],
+["¿Qué pasa con la rosa al final?","El estudiante la tira al arroyo y un carro la aplasta",["La planta en su jardín","Se la regala al profesor","La guarda en un libro"],"P. 9."],
+["¿Cómo califica el estudiante al amor al final?","Una tontería, menos útil que la lógica",["Un misterio sagrado","Una fuerza invencible","Un arte superior"],"P. 9."],
+["¿Qué decide hacer el estudiante tras el rechazo?","Volver a la filosofía y a la metafísica",["Buscar otra rosa","Perseguir a la joven","Viajar lejos"],"P. 9."],
+["¿Qué contraste central plantea el cuento entre el ruiseñor y el estudiante?","Entre el amor vivido y sacrificado, y la razón que busca solo lo práctico",["Entre ricos y pobres","Entre jóvenes y viejos","Entre ciudad y campo"],"Pp. 4-9. Interpretación de lectura."],
+["La respuesta de la hija del profesor ilustra…","una valoración materialista, donde el precio decide el valor",["una crítica a la música","un amor sincero","un rechazo por modestia"],"Pp. 8-9."],
+["El hecho de que el estudiante vuelva a la filosofía al final sugiere…","que no aprendió nada del sacrificio del ruiseñor",["que ha comprendido el amor","que se hará artista","que olvidó a la joven por prudencia"],"P. 9. Interpretación."],
+["Cuando el estudiante dice que el arte es «puro estilo, exento de sinceridad», el cuento muestra que…","puede haber sinceridad profunda detrás de la belleza que él no reconoce",["los artistas siempre son egoístas","el arte debe ser práctico","el ruiseñor no sentía nada"],"Pp. 5-8. Interpretación."],
+["¿Qué papel cumple la luna en la noche del sacrificio?","Se detiene a escuchar el canto durante toda la noche",["Se oculta del ruiseñor","Ilumina el jardín del estudiante","Ayuda al rosal a florecer"],"Pp. 6, 8."]
+];
+var N=10;
+function fmt(t){return t.replace(/\[([^\]]+)\]/g,'<span class="anchor">$1</span>')}
+var seen={},total=R.ext.length;
+function build(){
+ var h='<section class="panel on" id="Pr"><div class="sub"><button class="on" onclick="subt(0)">Resumen corto</button><button onclick="subt(1)">Resumen extenso</button></div>';
+ h+='<div class="sp on"><p class="lede">Oscar Wilde, «El ruiseñor y la rosa». Las etiquetas indican la página del PDF.</p>';
+ R.corto.forEach(function(s,i){h+='<div class="step"><h3>'+(i+1)+'. '+s[0]+'</h3><p>'+fmt(s[1])+'</p></div>'});
+ h+='</div><div class="sp"><p class="lede">Desarrollo por escenas. Las etiquetas indican la página del PDF.</p><div class="acc">';
+ R.ext.forEach(function(s,i){h+='<div class="item"><button class="hd" onclick="acc(this,'+i+')"><span>'+s[0]+'<small>'+s[1]+'</small></span><span class="ch">▾</span></button><div class="bd"><div>'+fmt(s[2])+'</div>'+(s[3]?'<div class="cita">'+fmt(s[3])+'</div>':'')+'</div></div>'});
+ h+='</div></div></section><section class="panel" id="Pa"><p class="lede">Lectura filosófica y ética del cuento. Son interpretaciones para preparar preguntas de análisis; contrástalas con lo visto en clase.</p>';
+ AN.forEach(function(b){h+='<div class="bridge"><h3>'+b[0]+'</h3><p class="lede" style="font-size:.8rem;margin:0 0 8px">'+b[1]+'</p><div class="cols"><div class="col k"><b>En el texto</b>'+fmt(b[2])+'</div><div class="col s"><b>Lectura</b>'+fmt(b[3])+'</div></div><div class="pq"><b>Posible pregunta de control</b>'+b[4]+'</div></div>'});
+ h+='</section><section class="panel" id="Pq"><div id="quiz"></div></section><footer>Herramienta de repaso. Basada en «El ruiseñor y la rosa», de Oscar Wilde, en la versión en español del material del curso. Uso de estudio personal.</footer>';
+ document.getElementById('app').innerHTML=h}
+function prog(){var n=Object.keys(seen).length;document.getElementById('fill').style.width=Math.round(n/total*100)+'%';document.getElementById('lbl').textContent=n+' de '+total+' escenas extensas revisadas'}
+function tab(t){document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.t==t)});['r','a','q'].forEach(function(x){document.getElementById('P'+x).classList.toggle('on',x==t)});document.getElementById('lbl').style.visibility=t=='r'?'visible':'hidden'}
+function subt(i){var p=document.getElementById('Pr');p.querySelectorAll('.sub button').forEach(function(b,j){b.classList.toggle('on',j==i)});p.querySelectorAll('.sp').forEach(function(s,j){s.classList.toggle('on',j==i)})}
+function acc(h,id){var b=h.nextElementSibling;if(h.classList.toggle('open')){b.style.maxHeight=b.scrollHeight+'px';seen[id]=1;prog()}else b.style.maxHeight=null}
+// Cuestionario
+var set,qi,score,wrong,cur,done;
+function sh(a){a=a.slice();for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1)),t=a[k];a[k]=a[j];a[j]=t}return a}
+function start(){set=sh(Q).slice(0,N);qi=0;score=0;wrong=[];show()}
+function show(){
+ if(qi>=N)return end();
+ var q=set[qi];cur=sh([q[1]].concat(q[2]));done=false;
+ var h='<div class="card"><div class="qmeta">Pregunta '+(qi+1)+' de '+N+' · Aciertos: '+score+' · Nivel intermedio</div><p class="qq">'+q[0]+'</p>';
+ cur.forEach(function(o,k){h+='<button class="opt" onclick="pick('+k+')">'+o+'</button>'});
+ document.getElementById('quiz').innerHTML=h+'<div id="fb"></div></div>'}
+function pick(k){
+ if(done)return;done=true;var q=set[qi],ok=cur[k]===q[1];
+ document.querySelectorAll('.opt').forEach(function(b,j){b.disabled=true;if(cur[j]===q[1])b.classList.add('ok');else if(j===k)b.classList.add('no')});
+ if(ok)score++;else wrong.push(q);
+ document.getElementById('fb').innerHTML='<div class="fb"><b>'+(ok?'¡Correcto! ':'No exactamente. ')+'</b>'+q[3]+'</div><button class="btn" onclick="qi++;show()">'+(qi<N-1?'Siguiente':'Ver resultado')+'</button>'}
+function end(){
+ var m=score>=9?'Excelente dominio.':score>=7?'Muy bien, repasa los errores.':score>=5?'Vas bien, conviene repasar.':'Repasa la lectura y vuelve a intentarlo.';
+ var h='<div class="card"><div class="qmeta">Resultado</div><div class="score">'+score+' / '+N+'</div><p>'+m+'</p>';
+ if(wrong.length){h+='<h2 style="font-size:1rem">Para repasar</h2>';wrong.forEach(function(q){h+='<div class="rev"><b>'+q[0]+'</b>Respuesta: '+q[1]+' ('+q[3]+')</div>'})}
+ document.getElementById('quiz').innerHTML=h+'<button class="btn" onclick="start()">Nuevo cuestionario</button></div>'}
+
+
+build();prog();start();
+</script>
+</body>
+</html>
